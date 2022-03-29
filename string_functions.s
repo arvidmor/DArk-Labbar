@@ -39,8 +39,8 @@ integer_array_sum:
 
 DBG:	##### DEBUGG BREAKPOINT ######
 
-        addi    $v0, $zero, 0           # Initialize Sum to zero.
-	add	$t0, $zero, $zero	# Initialize array index i to zero.
+    addi $v0, $zero, 0   	# Initialize Sum to zero.
+	add	 $t0, $zero, $zero	# Initialize array index i to zero.
 	
 for_all_in_array:
 
@@ -48,9 +48,9 @@ for_all_in_array:
 	
 	beq $t0, $a1, end_for_all # Done if i == N
 	sll $t1, $t0, 2 			# 4*i
-	add $t2, $a0, $t1			# address = ARRAY + 4*i
-	lw  $t3, 0($t2)				# n = A[i]
-       	add  $v0, $v0, $t3		# Sum = Sum + n
+	add $a0, $a0, $t1			# address = ARRAY + 4*i
+	lw  $t2, 0($a0)				# n = A[i]
+       	add  $v0, $v0, $t2		# Sum = Sum + n
         addi $t0, $t0, 1		# i++ 
   	j for_all_in_array			# next element
 	
@@ -69,11 +69,24 @@ end_for_all:
 #    EXAMPLE:  string_length("abcdef") == 6.
 #
 ##############################################################################	
+
+DBG:	##### DEBUGG BREAKPOINT ######
+
+    addi $v0, $zero, 0   	# Initialize length to 0
+	add	 $t0, $zero, $zero	# Initialize array index i to zero.
+	lb	 $t1, 0($a0)		# Load first character of the string
+	
+
 string_length:
 
-	#### Write your solution here ####
-	
-	jr	$ra
+	beq  $t1, $zero, end_for_all # Done if A[i] == NUL
+		addi $v0, $v0, 1 			# length++
+		addi $a0, $a0, 1			# address++
+	lb   $t1, 0($a0)				# char = A[i]
+	j string_length					# Next element
+
+  	j 	 end_for_all				# next element
+		jr	 $ra
 	
 ##############################################################################
 #
