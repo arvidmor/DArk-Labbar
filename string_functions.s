@@ -8,7 +8,7 @@
 #
 #  NAMN: Ida Hellqvist
 #
-#  NAMN: 
+#  NAMN: Simon Pislar
 #
 ##############################################################################
 
@@ -46,13 +46,13 @@ for_all_in_array:
 
 	#### Append a MIPS-instruktion before each of these comments
 	
-	# Done if i == N
-	# 4*i
-	# address = ARRAY + 4*i
-	# n = A[i]
-       	# Sum = Sum + n
-        # i++ 
-  	# next element
+	beq $t0, $a1, end_for_all # Done if i == N
+	sll $t1, $t0, 2 # 4*i
+ 	add $t2, $a0, $t1 # address = ARRAY + 4*i
+	lw $t3, 0($t2) # n = A[i]
+       	add $v0, $v0, $t3 # Sum = Sum + n
+        addi $t0, $t0, 1 # i++ 
+  	j for_all_in_array # next element
 	
 end_for_all:
 	
