@@ -8,7 +8,7 @@
 #
 #  NAMN: Ida Hellqvist
 #
-#  NAMN: 
+#  NAMN: Simon Pislar
 #
 ##############################################################################
 
@@ -100,10 +100,30 @@ count_characters:
 ##############################################################################	
 string_for_each:
 
-	addi	$sp, $sp, -4		# PUSH return address to caller
-	sw	$ra, 0($sp)
+	addi $sp, $sp, -4		# PUSH return address to caller
+	sw	 $ra, 0($sp)
 
-	#### Write your solution here ####
+	jal  string_length
+
+	addi $t0, $v0, 0		# Save number of characters in the string
+	addi $t1, $zero, 0		# Initialize index to 0
+
+	transform_char_loop: 
+		beq  $t1, $t0, end_loop 		# Done if A[i] == NUL
+			addi $sp, $sp, -8			# Save index and string length to stack
+			sw $t0, 4($sp)
+			sw $t1, 0($sp)
+
+			jal $a1						# Call subroutine on char
+
+			lw $t0, 4($sp)				# Restore index and string length from stack
+			lw $t1, 0($sp)
+			addi $sp, $sp, 8
+
+			addi $t1, $t1, 1			# address++
+
+	j transform_char_loop
+	end_loop:
 	
 	lw	$ra, 0($sp)		# Pop return address to caller
 	addi	$sp, $sp, 4		
