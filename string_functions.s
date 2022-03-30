@@ -101,28 +101,37 @@ count_characters:
 string_for_each:
 
 	addi $sp, $sp, -4		# PUSH return address to caller
-	sw	 $ra, 0($sp)
+	sw   $ra, 0($sp)
 
 	jal  string_length
 
 	addi $t0, $v0, 0		# Save number of characters in the string
 	addi $t1, $zero, 0		# Initialize index to 0
+	la   $ra, return_to_loop # Save return adress to after subroutine
 
 	transform_char_loop: 
 		beq  $t1, $t0, end_loop 		# Done if A[i] == NUL
-			addi $sp, $sp, -8			# Save index and string length to stack
-			sw $t0, 4($sp)
-			sw $t1, 0($sp)
 
-			jal $a1						# Call subroutine on char
+			addi $sp, $sp, -12			# Save index, string length and char adress to stack
+			sw $t0, 8($sp)
+			sw $t1, 4($sp)
+			sw $a0, 0($sp)
 
-			lw $t0, 4($sp)				# Restore index and string length from stack
-			lw $t1, 0($sp)
-			addi $sp, $sp, 8
 
-			addi $t1, $t1, 1			# address++
+			jr  $a1					# Call subroutine on char
+			return_to_loop:
+
+			lw $t0, 8($sp)				# Restore index, string length and char adress from stack
+			lw $t1, 4($sp)
+			lw $a0, 0($sp)
+			addi $sp, $sp, 12
+
+			addi $a0, $a0, 1			# Increment char adress
+
+			addi $t1, $t1, 1			# index++
 
 	j transform_char_loop
+
 	end_loop:
 	
 	lw	$ra, 0($sp)		# Pop return address to caller
