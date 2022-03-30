@@ -100,10 +100,16 @@ count_characters:
 ##############################################################################	
 string_for_each:
 
-	addi $sp, $sp, -4		# PUSH return address to caller
-	sw   $ra, 0($sp)
+	addi $sp, $sp, -8		# PUSH return address to caller
+	sw   $ra, 4($sp)
+
+	sw   $a0, 0($sp)		# PUSH string address
 
 	jal  string_length
+
+	lw  $a0, 0($sp)			# POP string address
+	
+	addi $sp, $sp, 4
 
 	addi $t0, $v0, 0		# Save number of characters in the string
 	addi $t1, $zero, 0		# Initialize index to 0
