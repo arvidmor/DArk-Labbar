@@ -27,12 +27,12 @@ STR_str:
 ##############################################################################
 #
 # DESCRIPTION:  For an array of integers, returns the total sum of all
-#		elements in the array.
+#				elements in the array.
 #
-# INPUT:        $a0 - address to first integer in array.
-#		$a1 - size of array, i.e., numbers of integers in the array.
+# 		INPUT:	$a0 - address to first integer in array.
+#				$a1 - size of array, i.e., numbers of integers in the array.
 #
-# OUTPUT:       $v0 - the total sum of all integers in the array.
+# 	   OUTPUT:	$v0 - the total sum of all integers in the array.
 #
 ##############################################################################
 integer_array_sum:  
@@ -66,7 +66,7 @@ end_for_all:
 #
 #      OUTPUT: $v0 - length of the string (NUL excluded).
 #
-#    EXAMPLE:  string_length("abcdef") == 6.
+#     EXAMPLE: string_length("abcdef") == 6.
 #
 ##############################################################################		
 
@@ -79,23 +79,23 @@ count_characters:
 
 	beq  $t1, $zero, end_for_all 	# Done if A[i] == NUL
 		addi $v0, $v0, 1 			# length++
-		addi $a0, $a0, 1			# address++
+		addi $a0, $a0, 1			# Increment char address
 	lb   $t1, 0($a0)				# char = A[i]
 	j count_characters				# Next char
 
-  	j 	 end_for_all				# next element
+  	j 	 end_for_all				# next element (correct?? Doesn't this exit the loop entirely?)
 	
 ##############################################################################
 #
 #  DESCRIPTION: For each of the characters in a string (from left to right),
-#		call a callback subroutine.
+#				call a callback subroutine.
 #
-#		The callback suboutine will be called with the address of
-#	        the character as the input parameter ($a0).
+#				The callback suboutine will be called with the address of
+#	        	the character as the input parameter ($a0).
 #	
 #        INPUT: $a0 - address to a NUL terminated string.
 #
-#		$a1 - address to a callback subroutine.
+#				$a1 - address to a callback subroutine.
 #
 ##############################################################################	
 string_for_each:
@@ -109,7 +109,7 @@ string_for_each:
 
 	lw  $a0, 0($sp)			# POP string address
 	
-	addi $sp, $sp, 4
+	addi $sp, $sp, 4		# Restore stack pointer
 
 	addi $t0, $v0, 0		# Save number of characters in the string
 	addi $t1, $zero, 0		# Initialize index to 0
@@ -118,30 +118,29 @@ string_for_each:
 	transform_char_loop: 
 		beq  $t1, $t0, end_loop 		# Done if A[i] == NUL
 
-			addi $sp, $sp, -12			# Save index, string length and char adress to stack
-			sw $t0, 8($sp)
-			sw $t1, 4($sp)
-			sw $a0, 0($sp)
+			addi $sp, $sp, -12			# Make room on stack
+			sw $t0, 8($sp)				# Save string length to stack - do we need to do this in every step through? Isn't it always the same?
+			sw $t1, 4($sp)				# Save index to stack
+			sw $a0, 0($sp)				# Save character adress to stack
 
-
-			jr  $a1					# Call subroutine on char
+			jr  $a1						# Call subroutine on char
 			return_to_loop:
 
-			lw $t0, 8($sp)				# Restore index, string length and char adress from stack
-			lw $t1, 4($sp)
-			lw $a0, 0($sp)
-			addi $sp, $sp, 12
+			lw $t0, 8($sp)				# Load string length from stack
+			lw $t1, 4($sp)				# Load index from stack
+			lw $a0, 0($sp)				# Load char adress from stack
+			addi $sp, $sp, 12			# Restore stack pointer
 
-			addi $a0, $a0, 1			# Increment char adress
+			addi $a0, $a0, 1			# Increment character adress
 
 			addi $t1, $t1, 1			# index++
 
-	j transform_char_loop
+	j transform_char_loop				# Next element
 
-	end_loop:
+	end_loop: 
 	
-	lw	$ra, 0($sp)		# Pop return address to caller
-	addi	$sp, $sp, 4		
+	lw	$ra, 0($sp)						# Pop return address to caller
+	addi	$sp, $sp, 4					# Restore stack pointer
 
 	jr	$ra
 
