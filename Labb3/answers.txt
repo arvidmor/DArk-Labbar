@@ -1,0 +1,23 @@
+Test code 1:
+Load what is at memory 0 to register $t1
+Store what is in register $t2 to memory 0
+
+Works. No dependencies
+
+
+
+Test code 2:
+Load what is at instruction 0 to register $t1
+Store what is in register $t1 to memory 3
+
+Doesn't work because of dependencies. Operation 2 will try to read the value produced
+from operation 1 to soon. Need 3 NOP's. Of double pumped, would have needed 2 NOP's.
+
+Test code 3:
+Load what is at instruction 0 to register $t1
+Load what is at instruction 1 to register $t2
+Add t1 and t2, store in t3
+Add t3 and t1, store in t3
+Store t3 to instruction 4
+
+Doesn't work because of dependencies. Needs total of 9 NOP's. 
